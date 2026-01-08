@@ -1,0 +1,49 @@
+{
+	"description": "Created by mythic_admin at 2026-01-07 14:44:16 Z",
+	"payload_type": "apfell",
+	"c2_profiles": [
+		{
+			"c2_profile": "http",
+			"c2_profile_is_p2p": false,
+			"c2_profile_parameters": {
+				"AESPSK": {
+					"dec_key": "YYk/Oc4a9cqKhsR7kKHtq5iNpb+SIQJLOgU/k+GfAAY=",
+					"enc_key": "YYk/Oc4a9cqKhsR7kKHtq5iNpb+SIQJLOgU/k+GfAAY=",
+					"value": "aes256_hmac"
+				},
+				"callback_host": "http://10.2.20.4",
+				"callback_interval": 10,
+				"callback_jitter": 23,
+				"callback_port": 80,
+				"encrypted_exchange_check": true,
+				"get_uri": "index",
+				"headers": {
+					"User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+				},
+				"killdate": "2027-01-07",
+				"post_uri": "data",
+				"proxy_host": "",
+				"proxy_pass": "",
+				"proxy_port": "",
+				"proxy_user": "",
+				"query_path_name": "q"
+			}
+		}
+	],
+	"build_parameters": [],
+	"commands": [
+		"cat",
+		"cd",
+		"download",
+		"exit",
+		"load",
+		"ls",
+		"rm",
+		"shell",
+		"sleep",
+		"upload"
+	],
+	"selected_os": "macOS",
+	"filename": "apfell-mac.js",
+	"wrapped_payload": ""
+}

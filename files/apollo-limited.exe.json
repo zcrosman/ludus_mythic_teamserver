@@ -1,0 +1,74 @@
+{
+	"description": "Created by mythic_admin at 2026-01-06 16:25:44 Z",
+	"payload_type": "apollo",
+	"c2_profiles": [
+		{
+			"c2_profile": "http",
+			"c2_profile_is_p2p": false,
+			"c2_profile_parameters": {
+				"AESPSK": {
+					"dec_key": "NHiFsVulAu4pH1nxE4Ge5l4kyYhuTTF56QEXFiKjlHE=",
+					"enc_key": "NHiFsVulAu4pH1nxE4Ge5l4kyYhuTTF56QEXFiKjlHE=",
+					"value": "aes256_hmac"
+				},
+				"callback_host": "http://10.2.20.4",
+				"callback_interval": 10,
+				"callback_jitter": 23,
+				"callback_port": 80,
+				"encrypted_exchange_check": true,
+				"headers": {
+					"User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+				},
+				"killdate": "2027-01-06",
+				"post_uri": "data",
+				"proxy_host": "",
+				"proxy_pass": "",
+				"proxy_port": "",
+				"proxy_user": ""
+			}
+		}
+	],
+	"build_parameters": [
+		{
+			"name": "output_type",
+			"value": "WinExe"
+		},
+		{
+			"name": "shellcode_format",
+			"value": "Binary"
+		},
+		{
+			"name": "shellcode_bypass",
+			"value": "Continue on fail"
+		},
+		{
+			"name": "adjust_filename",
+			"value": false
+		},
+		{
+			"name": "debug",
+			"value": false
+		}
+	],
+	"commands": [
+		"download",
+		"exit",
+		"load",
+		"ps",
+		"register_file",
+		"run",
+		"shell",
+		"ticket_cache_add",
+		"ticket_cache_extract",
+		"ticket_cache_list",
+		"ticket_cache_purge",
+		"ticket_store_add",
+		"ticket_store_list",
+		"ticket_store_purge",
+		"upload",
+		"wmiexecute"
+	],
+	"selected_os": "Windows",
+	"filename": "apollo-limited.exe",
+	"wrapped_payload": ""
+}

@@ -81,6 +81,12 @@
     community.general.make:
       chdir: /opt/mythic
 
+  - name: Update Password
+    ansible.builtin.command: "./mythic-cli config set MYTHIC_ADMIN_PASSWORD Password12345!"
+    args:
+      chdir: "/opt/mythic"
+    become: yes
+
   - name: Start Mythic
     ansible.builtin.command: "./mythic-cli start"
     args:
@@ -89,6 +95,12 @@
 
   - name: Install HTTP
     ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/http -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install SMB
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/smb -f"
     become: yes
     args:
       chdir: "/opt/mythic"
@@ -111,8 +123,40 @@
     args:
       chdir: "/opt/mythic"
 
+  - name: Install Appollo
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/Apollo -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install Medusa
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/Medusa -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install Xenon
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/Xenon -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install Forge
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/forge -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+
+
   - name: Start HTTP
     ansible.builtin.command: "/opt/mythic/mythic-cli start http"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start SMB
+    ansible.builtin.command: "/opt/mythic/mythic-cli start smb"
     become: yes
     args:
       chdir: "/opt/mythic"
@@ -131,6 +175,30 @@
 
   - name: Start Thanatos
     ansible.builtin.command: "/opt/mythic/mythic-cli start thanatos"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Apollo
+    ansible.builtin.command: "/opt/mythic/mythic-cli start apollo"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Medusa
+    ansible.builtin.command: "/opt/mythic/mythic-cli start medusa"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Xenon
+    ansible.builtin.command: "/opt/mythic/mythic-cli start xenon"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Forge
+    ansible.builtin.command: "/opt/mythic/mythic-cli start forge"
     become: yes
     args:
       chdir: "/opt/mythic"
@@ -175,6 +243,188 @@
     become: yes
     register: mythic_admin_pass
 
+  - name: Extract admin password from config output
+    ansible.builtin.set_fact:
+      mythic_password: "{{ mythic_admin_pass.stdout | regex_search('MYTHIC_ADMIN_PASSWORD\\s+(.+)', '\\1') | first | default('') | trim }}"
+
   - name: Output Mythic Password to User
     ansible.builtin.debug:
-      msg: "{{ mythic_admin_pass.stdout }}"
+      msg: "{{ mythic_password }}"
+
+
+  - name: Create payload_types directory
+    ansible.builtin.file:
+      path: /opt/mythic/payload_builders/
+      state: directory
+      mode: "0755"
+
+  - name: Copy all payloadJSON templates
+    ansible.builtin.copy:
+      src: files/
+      dest: /opt/mythic/payload_builders/
+      mode: "0644"
+
+  - name: Get Mythic Admin Username
+    ansible.builtin.command: "./mythic-cli config get MYTHIC_ADMIN_USER"
+    args:
+      chdir: "/opt/mythic"
+    become: yes
+    register: mythic_admin_user
+
+  - name: Extract admin username from config output
+    ansible.builtin.set_fact:
+      mythic_username: "{{ mythic_admin_user.stdout | regex_search('MYTHIC_ADMIN_USER\\s+(.+)', '\\1') | first | default('') | trim }}"
+
+  - name: Get Mythic Server Port
+    ansible.builtin.command: "./mythic-cli config get MYTHIC_SERVER_PORT"
+    args:
+      chdir: "/opt/mythic"
+    become: yes
+    register: mythic_server_port
+
+  - name: Get NGINX Port
+    ansible.builtin.command: "./mythic-cli config get NGINX_PORT"
+    args:
+      chdir: "/opt/mythic"
+    become: yes
+    register: nginx_port
+
+  - name: Extract port number from config output
+    ansible.builtin.set_fact:
+      mythic_port: "{{ mythic_server_port.stdout | regex_search('MYTHIC_SERVER_PORT\\s+([0-9]+)', '\\1') | first | default('17443') }}"
+
+  - name: Extract NGINX port number from config output
+    ansible.builtin.set_fact:
+      nginx_port_num: "{{ nginx_port.stdout | regex_search('NGINX_PORT\\s+([0-9]+)', '\\1') | first | default('744') }}"
+
+  - name: Set Mythic server URL for auth
+    ansible.builtin.set_fact:
+      mythic_url: "https://{{ ansible_default_ipv4.address }}:{{ mythic_port }}"
+
+  - name: Set Mythic GraphQL URL
+    ansible.builtin.set_fact:
+      mythic_graphql_url: "https://{{ ansible_default_ipv4.address }}:{{ nginx_port_num }}"
+
+  - name: Authenticate to Mythic and get access token (HTTPS)
+    ansible.builtin.uri:
+      url: "{{ mythic_url }}/auth"
+      method: POST
+      body_format: json
+      body:
+        username: "{{ mythic_username }}"
+        password: "{{ mythic_password }}"
+      headers:
+        Content-Type: "application/json"
+        Mythicsource: "web"
+      validate_certs: no
+      force_basic_auth: no
+      status_code: 200
+      timeout: 30
+    register: auth_response
+    ignore_errors: yes
+    environment:
+      PYTHONHTTPSVERIFY: "0"
+      CURL_CA_BUNDLE: ""
+      REQUESTS_CA_BUNDLE: ""
+
+  - name: Authenticate to Mythic and get access token (HTTP fallback)
+    ansible.builtin.uri:
+      url: "http://{{ ansible_default_ipv4.address }}:{{ mythic_port }}/auth"
+      method: POST
+      body_format: json
+      body:
+        username: "{{ mythic_username }}"
+        password: "{{ mythic_password }}"
+      headers:
+        Content-Type: "application/json"
+        Mythicsource: "web"
+      status_code: 200
+      timeout: 30
+    register: auth_response_http
+    when: auth_response is failed or (auth_response.status is defined and auth_response.status == -1)
+    environment:
+      PYTHONHTTPSVERIFY: "0"
+      CURL_CA_BUNDLE: ""
+      REQUESTS_CA_BUNDLE: ""
+
+  - name: Set auth_response to HTTP result if HTTPS failed
+    ansible.builtin.set_fact:
+      auth_response: "{{ auth_response_http }}"
+    when: auth_response_http is defined and auth_response_http.status == 200
+
+  - name: Update mythic_url to HTTP if HTTPS failed
+    ansible.builtin.set_fact:
+      mythic_url: "https://{{ ansible_default_ipv4.address }}:{{ mythic_port }}"
+    when: auth_response_http is defined and auth_response_http.status == 200
+
+  - name: Extract access token
+    ansible.builtin.set_fact:
+      mythic_access_token: "{{ auth_response.json.access_token }}"
+
+  - name: Output Mythic Access Token to User
+    ansible.builtin.debug:
+      msg: "Mythic Access Token: {{ mythic_access_token }}"
+
+  - name: Find all payload JSON files
+    ansible.builtin.find:
+      paths: /opt/mythic/payload_builders/
+      patterns: "*.json"
+      file_type: file
+    register: payload_files
+
+  - name: Read payload config files
+    ansible.builtin.slurp:
+      src: "{{ item.path }}"
+    register: payload_content
+    loop: "{{ payload_files.files }}"
+    loop_control:
+      label: "{{ item.path | basename }}"
+
+  - name: Format payload JSON with escaped newlines and tabs
+    ansible.builtin.set_fact:
+      formatted_payloads: "{{ formatted_payloads | default([]) + [{
+        'filename': item.item.path | basename,
+        'content': (item.content | b64decode)
+      }] }}"
+    loop: "{{ payload_content.results }}"
+    loop_control:
+      label: "{{ item.item.path | basename }}"
+
+  - name: Upload payload config to Mythic via GraphQL
+    ansible.builtin.uri:
+      url: "{{ mythic_graphql_url }}/graphql/"
+      method: POST
+      body_format: json
+      body:
+        operationName: "createPayloadMutation"
+        variables:
+          payload: "{{ item.content | to_json }}"
+        query: "mutation createPayloadMutation($payload: String!) { createPayload(payloadDefinition: $payload) { error status uuid __typename } }"
+      headers:
+        Content-Type: "application/json"
+        Authorization: "Bearer {{ mythic_access_token }}"
+        Mythicsource: "web"
+      validate_certs: no
+      force_basic_auth: no
+      status_code: 200
+      timeout: 30
+    register: upload_result
+    loop: "{{ formatted_payloads }}"
+    loop_control:
+      label: "{{ item.filename }}"
+    environment:
+      PYTHONHTTPSVERIFY: "0"
+      CURL_CA_BUNDLE: ""
+      REQUESTS_CA_BUNDLE: ""
+
+  - name: Display upload results
+    ansible.builtin.debug:
+      msg: "Uploaded {{ item.item.filename }} - Status: {{ item.json.data.createPayload.status | default('unknown') }}, UUID: {{ item.json.data.createPayload.uuid | default('N/A') }}"
+    loop: "{{ upload_result.results }}"
+    when: 
+      - item.json is defined
+      - item.json.data is defined
+      - item.json.data.createPayload is defined
+      - item.json.data.createPayload.status is defined
+      - item.json.data.createPayload.status == "success"
+

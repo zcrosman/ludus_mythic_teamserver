@@ -1,0 +1,100 @@
+{
+	"description": "Created by mythic_admin at 2026-01-07 14:48:03 Z",
+	"payload_type": "thanatos",
+	"c2_profiles": [
+		{
+			"c2_profile": "http",
+			"c2_profile_is_p2p": false,
+			"c2_profile_parameters": {
+				"AESPSK": {
+					"dec_key": "jJXuKwzwcjiT9bk08NSpVQs8LCvvsEpZFrYVxcjwU7w=",
+					"enc_key": "jJXuKwzwcjiT9bk08NSpVQs8LCvvsEpZFrYVxcjwU7w=",
+					"value": "aes256_hmac"
+				},
+				"callback_host": "https://10.2.20.4",
+				"callback_interval": 10,
+				"callback_jitter": 23,
+				"callback_port": 80,
+				"encrypted_exchange_check": true,
+				"get_uri": "index",
+				"headers": {
+					"User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+				},
+				"killdate": "2027-01-07",
+				"post_uri": "data",
+				"proxy_host": "",
+				"proxy_pass": "",
+				"proxy_port": "",
+				"proxy_user": "",
+				"query_path_name": "q"
+			}
+		}
+	],
+	"build_parameters": [
+		{
+			"name": "shared_config",
+			"value": "library export"
+		},
+		{
+			"name": "shared_export",
+			"value": "entrypoint"
+		},
+		{
+			"name": "daemonize",
+			"value": false
+		},
+		{
+			"name": "connection_retries",
+			"value": "1"
+		},
+		{
+			"name": "architecture",
+			"value": "x64"
+		},
+		{
+			"name": "working_hours",
+			"value": "00:00-23:59"
+		},
+		{
+			"name": "static",
+			"value": false
+		},
+		{
+			"name": "output",
+			"value": "executable"
+		}
+	],
+	"commands": [
+		"cat",
+		"cd",
+		"cp",
+		"download",
+		"exit",
+		"getenv",
+		"getprivs",
+		"jobkill",
+		"jobs",
+		"ls",
+		"mkdir",
+		"mv",
+		"netstat",
+		"portscan",
+		"powershell",
+		"ps",
+		"pwd",
+		"redirect",
+		"rm",
+		"setenv",
+		"shell",
+		"sleep",
+		"ssh",
+		"ssh-agent",
+		"ssh-spawn",
+		"unsetenv",
+		"upload",
+		"workinghours"
+	],
+	"selected_os": "Windows",
+	"filename": "thanatos.exe",
+	"wrapped_payload": ""
+}
