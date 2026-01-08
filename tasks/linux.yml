@@ -105,6 +105,30 @@
     args:
       chdir: "/opt/mythic"
 
+  - name: Install HTTPX
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/httpx -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install DNS
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/dns -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install Discord
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/discord -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Install WebSocket
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicC2Profiles/websocket -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
   - name: Install Poseidon
     ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/poseidon -f"
     become: yes
@@ -147,7 +171,11 @@
     args:
       chdir: "/opt/mythic"
 
-
+  - name: Install Hannibal
+    ansible.builtin.command: "/opt/mythic/mythic-cli install github https://github.com/MythicAgents/Hannibal -f"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
 
   - name: Start HTTP
     ansible.builtin.command: "/opt/mythic/mythic-cli start http"
@@ -157,6 +185,30 @@
 
   - name: Start SMB
     ansible.builtin.command: "/opt/mythic/mythic-cli start smb"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start HTTPX
+    ansible.builtin.command: "/opt/mythic/mythic-cli start httpx"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start DNS
+    ansible.builtin.command: "/opt/mythic/mythic-cli start dns"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Discord
+    ansible.builtin.command: "/opt/mythic/mythic-cli start discord"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start WebSocket
+    ansible.builtin.command: "/opt/mythic/mythic-cli start websocket"
     become: yes
     args:
       chdir: "/opt/mythic"
@@ -199,6 +251,12 @@
 
   - name: Start Forge
     ansible.builtin.command: "/opt/mythic/mythic-cli start forge"
+    become: yes
+    args:
+      chdir: "/opt/mythic"
+
+  - name: Start Hannibal
+    ansible.builtin.command: "/opt/mythic/mythic-cli start hannibal"
     become: yes
     args:
       chdir: "/opt/mythic"
